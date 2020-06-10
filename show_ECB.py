@@ -5,22 +5,19 @@ Created on Tue Apr  7 17:55:15 2020
 @author: Mohd Bilal
 """
     
-import pandas as pd
-import numpy as np
+import pandas as pd                      #1.0.3
+import numpy as np                       #1.18.1
 import math
 from scipy.stats import norm    
 from scipy.stats import mannwhitneyu
 from scipy.stats import beta
 from statistics import variance
+from flask import Flask, render_template, request
+import ctypes  # An included library with Python install.        #1.1.0
 
 
 pd.options.mode.chained_assignment = None
 
-#Import the snapshots file, grades file and initial developement calculations file
-#prior_df=pd.read_excel("Snapshots.xlsx",sheet_name="PRIOR")
-#current_df=pd.read_excel("Snapshots.xlsx",sheet_name="CURRENT")
-#grades_df=pd.read_excel("Grades info.xlsx",sheet_name="Internal_Ratings")
-#initial_data_df=pd.read_excel("Initial Development info.xlsx",sheet_name="Information")
 
 C_id='Customer ID'
 Grades="Possible Grades"
@@ -477,29 +474,22 @@ def occ_of_override(sub_current):
     
     df=pd.DataFrame(data)
     
-    #df.to_csv("Override.csv",index=False)   #write to csv fie
+    #df.to_csv("Override.csv",index=False)   #write to csv file
     
     return df
 
 
-
-from flask import Flask, render_template, request
-import ctypes  # An included library with Python install.   
+   
 
 app = Flask(__name__)
 app.debug = True
-
-'''@app.route('/')
-def student():
-   return render_template('test.html')'''
 
 
 @app.route('/')
 def files():
    return render_template('files.html')
 
-def abc():
-    return 5+2
+
 
 @app.route("/MSID",methods = ['POST', 'GET'])
 def MSIDs():
@@ -570,11 +560,19 @@ def MSIDs():
         
         
         return render_template('ECB.html',S=S,M=M)
-        #print(result,"******************",abc(),"\n",dfr1,"\n",dfr2,"\n",dfr3,"\n",dfr4)
         
-
-
-
+        
+        
+@app.route("/refer",methods = ['POST', 'GET'])
+def ref():
+    if request.method == 'POST':
+        global M
+        global S
+        
+        return render_template('ECB.html',S=S,M=M)
+    
+    
+    
 @app.route("/tables",methods = ['POST', 'GET'])
 def show_tables():
     if request.method == 'POST':
@@ -672,7 +670,7 @@ def show_tables():
                         migration_mat_df.fillna('',inplace=True)
                         
                         if count==0:
-                            s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                            s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                             s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -684,6 +682,7 @@ def show_tables():
                             s10='<h3>3. Concentration in Rating Grades (Exposure Weighted)</h3>' + df5.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             
                             res=''
+                            
                             if 'Q1' in list_of_keys:
                                 res+=s1
                             if 'P1' in list_of_keys:
@@ -715,10 +714,14 @@ def show_tables():
                                         +res
                                         +'</center>')
                             _file.close()
-                            result=result+'<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M[i]+') Snapshot ('+S[j]+')</h1><hr><hr><hr>'+res+'</center>'
+                            result=result+'''<div class="navbar" style="position:fixed;">
+                                        <form action = "http://localhost:5000/refer" method = "POST" enctype=multipart/form-data>
+                                        <input type="submit" value="Back" style="height:50px;width:100px;">
+                                        </form>
+                                        </div>'''+'<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M[i]+') Snapshot ('+S[j]+')</h1><hr><hr><hr>'+res+'</center>'
                         
                         else:
-                            s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                            s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                             s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -806,7 +809,7 @@ def show_tables():
                         migration_mat_df.fillna('',inplace=True)
                         
                         if count==0:
-                            s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                            s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                             s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -849,9 +852,13 @@ def show_tables():
                                         +res
                                         +'</center>')
                             _file.close()
-                            result+='<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M[i]+') Snapshot ('+S_list[j]+')</h1><hr><hr><hr>'+res+'</center>'
+                            result=result+'''<div class="navbar" style="position:fixed;">
+                                        <form action = "http://localhost:5000/refer" method = "POST" enctype=multipart/form-data>
+                                        <input type="submit" value="Back" style="height:50px;width:100px;">
+                                        </form>
+                                        </div>'''+'<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M[i]+') Snapshot ('+S_list[j]+')</h1><hr><hr><hr>'+res+'</center>'
                         else:
-                            s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                            s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                             s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                             s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -938,7 +945,7 @@ def show_tables():
                     migration_mat_df.fillna('',inplace=True)
                     
                     if count==0:
-                        s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                        s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                         s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -981,9 +988,13 @@ def show_tables():
                                     +res
                                     +'</center>')
                         _file.close()
-                        result+='<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M_list[i]+') Snapshot ('+S[j]+')</h1><hr><hr><hr>'+res+'</center>'
+                        result=result+'''<div class="navbar" style="position:fixed;">
+                                    <form action = "http://localhost:5000/refer" method = "POST" enctype=multipart/form-data>
+                                    <input type="submit" value="Back" style="height:50px;width:100px;">
+                                    </form>
+                                    </div>'''+'<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M_list[i]+') Snapshot ('+S[j]+')</h1><hr><hr><hr>'+res+'</center>'
                     else:
-                        s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                        s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                         s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -1070,7 +1081,7 @@ def show_tables():
                     migration_mat_df.fillna('',inplace=True)
                     
                     if count==0:
-                        s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                        s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                         s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -1113,9 +1124,13 @@ def show_tables():
                                     +res
                                     +'</center>')
                         _file.close()
-                        result+='<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M_list[i]+') Snapshot ('+S_list[j]+')</h1><hr><hr><hr>'+res+'</center>'
+                        result=result+'''<div class="navbar" style="position:fixed;">
+                                    <form action = "http://localhost:5000/refer" method = "POST" enctype=multipart/form-data>
+                                    <input type="submit" value="Back!" style="height:50px;width:100px;">
+                                    </form>
+                                    </div>''''<center>'+'<h1>Validation Results of IRB PD Model</h1><br>'+'<hr><hr><hr><hr><h1>Model ('+M_list[i]+') Snapshot ('+S_list[j]+')</h1><hr><hr><hr>'+res+'</center>'
                     else:
-                        s1='<h2>Qualitative Validation</h2><h3>Occurance of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
+                        s1='<h2>Qualitative Validation</h2><h3>Occurrence of Overrides</h3>' + df9.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s2='<h2>Predictive Ability</h2><h3>PD back-testing (Portfolio level)</h3>' + df8.to_html(index=False,border=2,justify="center") + '<br>'
                         s3='<h2>Predictive Ability</h2><h3>PD back-testing (Grades level)</h3>' + df7.to_html(index=False,border=2,justify="center") + '<br><hr>'
                         s4='<h2>Discriminatory Power</h2><h3>Current AUC vs. AUC at initial validation/development</h3>' + df6.to_html(index=False,border=2,justify="center") + '<br><hr>'
@@ -1160,8 +1175,6 @@ def show_tables():
             return result#render_template('Result1.html')#,tables=[migration_mat_df.to_html(), df1.to_html(),df2.to_html(),df3.to_html(),df4.to_html(),
                                                    #df5.to_html(),df6.to_html(),df7.to_html(),df8.to_html(),df9.to_html()],
                                #titles = ['na', 'DF1', 'DF2', 'DF3', 'DF4', 'DF5', 'DF6', 'DF7', 'DF8','DF9'],result=result)
-
-
 
 
 #Execution of the Application Starts from here (The Driver Function)                    
