@@ -110,7 +110,11 @@
 	</head>
 	
 	<body style="background-color:#4a171e;color:white">
-		
+		<div class="navbar0" style="position:fixed;">
+            <form action = "http://localhost:5000">
+            <input type="submit" class=sub value="Click here to modify the input files">
+            </form>
+        </div>
 		<center><h1 style="color:white;">Validation Results of IRB PD Model</h1></center>
 		<hr><br>
 	
@@ -137,7 +141,7 @@
 					{% endfor %}
 					</select>
 					</div>
-					<p align="center">*Hold down the Ctrl (windows) or Command (Mac) button to select multiple Snapshots.</p>
+					<p align="center">*Hold down the Ctrl (windows) or Command (Mac) button to select multiple Models/Snapshots.</p>
 			</div>
 		</center>
 
@@ -180,8 +184,10 @@
 			</div>
   				
 		</div>
-				<center><p ><input type = "submit" class='sub' value = "Search" /></p></center>
+				<center><p ><input type = "submit" class='sub' value = "Proceed" /></p></center>
 				</form>
+		
+		
 		<br><br><br><br><hr>
 		<p align="right">Developed and Designed by: <i>Mohd Bilal (GRA-intern 45097272)</i></p>
 		
