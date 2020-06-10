@@ -6,14 +6,14 @@
 		<style>
 			.maindiv {
   				background-color: #116466;
-				height:460px;
+				height:440px;
 				width:100%;
 				font-size:20px;
 				color:#ffcb9a;
 				#display: flex;
 			    }
 			.f{
-				padding-top:50px;
+				padding-top:10px;
 				margin-left:5px;
 				#float:left;
 				width:30%;
@@ -38,6 +38,7 @@
 				border-radius:20px;
 				color:black;
 				background-color: #d9b08c;
+				width:350px;
 			}
 		</style>
 	</head>
@@ -53,7 +54,7 @@
 			<div class='f'>
 				<form action = "http://localhost:5000/MSID" method = "POST" enctype=multipart/form-data>
 				<h2>Select Input Files</h2>
-
+				
 				
   				<label for="myfile1">Select Snapshots file</label><br>
   				<input type="file" id="myfile" name="myfile1"><br><br><br>
@@ -61,14 +62,19 @@
   				<input type="file" id="myfile" name="myfile2"><br><br><br>
 				<label for="myfile3">Select Initial Development info file</label><br>
   				<input type="file" id="myfile" name="myfile3"><br><br><br>
-  
+
+
+  				
 			</div>
-			
+			<p align="right">*Important: All files should be in .xlsx format</p>
 			
 		</div>
 
-		<p ><input type = "submit"  class='sub' value = "Next" /></p></center>
+		<p ><input type = "submit"  class='sub' value = "Proceed" /></p></center>
+
 		</form></center>
+		
+		
 		<br><br><br><br><hr>
 		<p align="right">Developed and Designed by: <i>Mohd Bilal (GRA-intern 45097272)</i></p>
 	</body>
